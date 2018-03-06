@@ -41,7 +41,6 @@ def getpipeoutput(cmds, quiet = False):
 	global exectime_external
 	start = time.time()
 	if not quiet and ON_LINUX and os.isatty(1):
-		print '>> ' + ' | '.join(cmds),
 		sys.stdout.flush()
 	p0 = subprocess.Popen(cmds[0], stdout = subprocess.PIPE, shell = True)
 	p = p0
@@ -50,10 +49,6 @@ def getpipeoutput(cmds, quiet = False):
 		p0 = p
 	output = p.communicate()[0]
 	end = time.time()
-	if not quiet:
-		if ON_LINUX and os.isatty(1):
-			print '\r',
-		print '[%.5f] >> %s' % (end - start, ' | '.join(cmds))
 	exectime_external += (end - start)
 	return output.rstrip('\n')
 
@@ -765,6 +760,7 @@ class HTMLReportCreator(ReportCreator):
 		###
 		# Authors
 		f = open(path + '/authors.html', 'w')
+		f = open(path + '/authors.html', 'w')
 		self.printHeader(f)
 
 		f.write('<h1>Authors</h1>')
@@ -772,13 +768,14 @@ class HTMLReportCreator(ReportCreator):
 
 		# Authors :: List of authors
 		f.write(html_header(2, 'CSV of Authors'))
-
-		#f.write('')
-		#f.write('<tr><th>Author</th><th>Commits (%)</th><th>+ lines</th><th>- lines</th><th>First commit</th><th>Last commit</th><th class="unsortable">Age</th><th>Active days</th><th># by commits</th></tr>')
+		print "Author, commits, lines_added, lines_removed"
+		print "\n"
 		for author in data.getAuthors(conf['max_authors']):
 			info = data.getAuthorInfo(author)
-			f.write('%s,%d (%.2f%%),%d,%d,%s,%s,%s,%d,%d,' % (author, info['commits'], info['commits_frac'], info['lines_added'], info['lines_removed'], info['date_first'], info['date_last'], info['timedelta'], info['active_days'], info['place_by_commits']))
-		f.write('<br />')
+			print (author, info['commits'], info['lines_added'], info['lines_removed'])
+			print "\n"
+			f.write('%s,%d (%.2f%%),%d,%d,%s,%s,%s,%d,%d,\n\n' % (author, info['commits'], info['commits_frac'], info['lines_added'], info['lines_removed'], info['date_first'], info['date_last'], info['timedelta'], info['active_days'], info['place_by_commits']))
+		f.write('==')
 
 		# Authors :: List of authors
 		f.write(html_header(2, 'List of Authors'))
